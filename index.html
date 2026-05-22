@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Blog</title>
+<title>Controlled Chaos — Essays, experiments, and ideas</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.0/marked.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -36,6 +36,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 
 .filter-section-header{padding:10px 14px 6px;display:flex;align-items:center;gap:8px;background:var(--bg3)}
 .filter-section-title{font-size:10px;font-weight:600;color:var(--tx2);text-transform:uppercase;letter-spacing:0.6px}
+.filter-section-title.centered{flex:1;text-align:center}
+#action-bar{display:none;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:0.5px solid var(--bd);background:var(--bg3)}
+#action-bar.show{display:flex}
+#action-bar #read-now{color:var(--m-str)}
+#action-bar #read-now:hover{color:var(--m-tx)}
+#action-bar #clear-filters{color:var(--r-tx)}
+#action-bar #clear-filters:hover{color:var(--r-str)}
 .filter-section-header .ph-link{margin-left:auto}
 .filter-cb{display:flex;align-items:center;gap:8px;padding:7px 14px;cursor:pointer;font-size:12px;color:var(--tx2);transition:background 0.1s;user-select:none}
 .filter-cb:hover{background:var(--bg3);color:var(--tx1)}
@@ -56,6 +63,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 .entry-tags{display:flex;flex-wrap:wrap;gap:4px}
 .entry-tag{font-size:8px;font-weight:500;padding:1px 6px;border-radius:3px;letter-spacing:0.3px;text-transform:uppercase;background:var(--c-fill);color:var(--c-tx)}
 .entry-empty{padding:24px 14px;color:var(--tx3);font-size:12px;line-height:1.6}
+
+#reader-header{padding:0 20px;height:40px;display:flex;align-items:center;gap:12px;border-bottom:0.5px solid var(--bd);background:var(--bg2);flex-shrink:0}
+#reader-count{font-size:10px;color:var(--tx2);font-family:monospace}
+.article-divider{max-width:720px;margin:0 auto;border:none;border-top:0.5px solid var(--bd);position:relative}
+.article-divider::after{content:attr(data-label);position:absolute;top:-7px;left:50%;transform:translateX(-50%);background:var(--bg1);padding:0 12px;font-size:9px;text-transform:uppercase;letter-spacing:0.5px;color:var(--tx3);font-family:monospace}
 
 #main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
 
@@ -93,19 +105,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 </head>
 <body>
 <header id="topbar">
-  <button class="ph-link" id="filter-toggle">Topics</button>
+  <button class="ph-link" id="filter-toggle">Reading List</button>
 </header>
 
 <div id="shell">
   <aside class="panel" id="sidebar">
-    <div class="ph"><span>Topics</span><button id="close-drawer" aria-label="Close">&times;</button></div>
+    <div class="ph"><span>Reading List</span><button id="close-drawer" aria-label="Close">&times;</button></div>
     <div class="scroll">
-      <div class="filter-section-header">
-        <span class="filter-section-title">Filter by tag</span>
-        <button class="ph-link" id="clear-filters" style="display:none">Clear</button>
+      <div id="action-bar">
+        <button class="ph-link" id="read-now">READ NOW</button>
+        <button class="ph-link" id="clear-filters">CLEAR</button>
       </div>
       <div id="tag-list"></div>
-      <div class="filter-section-header"><span class="filter-section-title">Posts</span></div>
+      <div class="filter-section-header"><span class="filter-section-title centered">Articles</span></div>
       <div id="entry-list"></div>
     </div>
   </aside>
@@ -115,7 +127,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
       <img src="cosmo-kramer-splash.jpg" alt="">
     </div>
     <div id="reader-view">
-      <div id="reader-scroll"><div class="article" id="article"></div></div>
+      <div id="reader-header"><span id="reader-count"></span></div>
+      <div id="reader-scroll"><div id="article"></div></div>
     </div>
   </main>
 </div>
@@ -170,8 +183,10 @@ const FALLBACK = {
 const splash = document.getElementById("splash");
 const readerView = document.getElementById("reader-view");
 const article = document.getElementById("article");
+const readerCount = document.getElementById("reader-count");
 const tagList = document.getElementById("tag-list");
 const entryList = document.getElementById("entry-list");
+const actionBar = document.getElementById("action-bar");
 const sidebar = document.getElementById("sidebar");
 const scrim = document.getElementById("scrim");
 
@@ -190,29 +205,31 @@ document.addEventListener("keydown", e => { if (e.key === "Escape") closeDrawer(
 const tagCounts = {};
 POSTS.forEach(p => p.tags.forEach(t => { tagCounts[t] = (tagCounts[t] || 0) + 1; }));
 const clearBtn = document.getElementById("clear-filters");
+const readBtn = document.getElementById("read-now");
 Object.keys(tagCounts).sort().forEach(tag => {
   const label = document.createElement("label");
   label.className = "filter-cb";
   label.innerHTML = '<input type="checkbox" value="' + tag + '"><span class="cb-label">' + tag + '</span><span class="ct">' + tagCounts[tag] + '</span>';
   label.querySelector("input").addEventListener("change", e => {
     if (e.target.checked) selected.add(tag); else selected.delete(tag);
-    renderEntries();
+    refresh();
   });
   tagList.appendChild(label);
 });
 clearBtn.addEventListener("click", () => {
   selected.clear();
   tagList.querySelectorAll("input").forEach(i => i.checked = false);
-  renderEntries();
+  refresh();
 });
+readBtn.addEventListener("click", buildReadingList);
 
 function visiblePosts(){
   if (selected.size === 0) return POSTS;
   return POSTS.filter(p => p.tags.some(t => selected.has(t)));
 }
 
-function renderEntries(){
-  clearBtn.style.display = selected.size > 0 ? "inline-block" : "none";
+function refresh(){
+  actionBar.classList.toggle("show", selected.size > 0);
   const posts = visiblePosts();
   entryList.innerHTML = "";
   if (posts.length === 0){
@@ -232,7 +249,7 @@ function renderEntries(){
       '<div class="entry-title">' + post.title + '</div>' +
       '<div class="entry-tags">' + tagsHtml + '</div>' +
       '</div>';
-    row.addEventListener("click", () => openPost(post));
+    row.addEventListener("click", () => openSinglePost(post));
     entryList.appendChild(row);
   });
 }
@@ -250,19 +267,50 @@ async function fetchMarkdown(post){
   }
 }
 
-async function openPost(post){
-  activeFile = post.file;
-  renderEntries();
-  closeDrawer();
+function startReader(label){
   splash.style.display = "none";
   readerView.classList.add("open");
+  readerCount.textContent = label;
+  article.innerHTML = "";
   document.getElementById("reader-scroll").scrollTop = 0;
-  const tagsHtml = post.tags.map(t => '<span class="card-tag">' + t + '</span>').join("");
-  const md = await fetchMarkdown(post);
-  article.innerHTML = '<div class="card-tags">' + tagsHtml + '</div><div class="article-content">' + marked.parse(md) + '</div>';
 }
 
-renderEntries();
+async function appendArticle(post, showDivider){
+  if (showDivider){
+    const hr = document.createElement("hr");
+    hr.className = "article-divider";
+    hr.setAttribute("data-label", "Next");
+    article.appendChild(hr);
+  }
+  const wrap = document.createElement("div");
+  wrap.className = "article";
+  const tagsHtml = post.tags.map(t => '<span class="card-tag">' + t + '</span>').join("");
+  const md = await fetchMarkdown(post);
+  wrap.innerHTML = '<div class="card-tags">' + tagsHtml + '</div><div class="article-content">' + marked.parse(md) + '</div>';
+  article.appendChild(wrap);
+}
+
+async function openSinglePost(post){
+  activeFile = post.file;
+  refresh();
+  closeDrawer();
+  startReader("1 post");
+  await appendArticle(post, false);
+}
+
+async function buildReadingList(){
+  const posts = visiblePosts();
+  if (posts.length === 0) return;
+  activeFile = null;
+  refresh();
+  closeDrawer();
+  startReader(posts.length + (posts.length === 1 ? " post" : " posts"));
+  for (let i = 0; i < posts.length; i++){
+    await appendArticle(posts[i], i > 0);
+  }
+}
+
+refresh();
 </script>
 </body>
 </html>

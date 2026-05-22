@@ -1,33 +1,324 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.0/marked.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg1:#ffffff;--bg2:#f7f7f5;--bg3:#eeeee9;--tx1:#1a1a1a;--tx2:#6b6b6b;--tx3:#9b9b9b;--bd:#e0e0dc;
+--c-fill:#EEEDFE;--c-str:#534AB7;--c-tx:#3C3489;--c-bg:rgba(83,74,183,0.06);
+--m-fill:#E1F5EE;--m-str:#0F6E56;--m-tx:#085041;--m-bg:rgba(15,110,86,0.06);
+--p-fill:#FAEEDA;--p-str:#854F0B;--p-tx:#633806;--p-bg:rgba(133,79,11,0.06);
+--r-fill:#FBEAF0;--r-str:#AD2B60;--r-tx:#72243E;--r-bg:rgba(173,43,96,0.06);
+--link:rgba(0,0,0,0.18);--link-hi:rgba(0,0,0,0.45)}
+@media(prefers-color-scheme:dark){:root{--bg1:#1a1a1a;--bg2:#222220;--bg3:#2c2c2a;--tx1:#e8e8e4;--tx2:#9b9b95;--tx3:#6b6b65;--bd:#3a3a38;
+--c-fill:#3C3489;--c-str:#AFA9EC;--c-tx:#CECBF6;--c-bg:rgba(60,52,137,0.2);
+--m-fill:#085041;--m-str:#5DCAA5;--m-tx:#9FE1CB;--m-bg:rgba(8,80,65,0.2);
+--p-fill:#633806;--p-str:#FAC775;--p-tx:#FAEEDA;--p-bg:rgba(99,56,6,0.2);
+--r-fill:#72243E;--r-str:#F28AAE;--r-tx:#FBEAF0;--r-bg:rgba(114,36,62,0.2);
+--link:rgba(255,255,255,0.20);--link-hi:rgba(255,255,255,0.5)}}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg1);color:var(--tx1);height:100vh;overflow:hidden;font-size:13px;display:flex;flex-direction:column}
 
-    body {
-      display: grid;
-      place-items: center;
-      padding: 16px; /* keeps a little breathing room on phones */
-      box-sizing: border-box;
-    }
+#topbar{flex-shrink:0;display:flex;align-items:center;gap:24px;padding:0 20px;height:56px;border-bottom:0.5px solid var(--bd);background:var(--bg2)}
+.topbar-brand{display:flex;flex-direction:column;gap:2px;min-width:0}
+.topbar-title{font-size:15px;font-weight:600;color:var(--tx1);letter-spacing:0.2px;line-height:1.2;white-space:nowrap}
+.topbar-tagline{font-size:10px;color:var(--tx3);font-family:'SF Mono',Menlo,monospace;letter-spacing:0.3px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar-actions{margin-left:auto;display:flex;align-items:center;gap:18px;flex-shrink:0}
+.ph-link{background:none;border:none;color:var(--tx3);font-size:10px;font-family:inherit;font-weight:500;text-transform:uppercase;letter-spacing:0.5px;cursor:pointer;padding:0;text-decoration:underline dotted;text-underline-offset:3px}
+.ph-link:hover{color:var(--c-str)}
+#filter-toggle{display:none}
 
-    img {
-      display: block;
-      max-width: 100%;
-      max-height: 100%;
-      height: auto;
-      width: auto; /* keep natural size unless constrained */
-    }
-  </style>
+#shell{display:flex;flex:1;min-height:0}
+
+.panel{background:var(--bg2);border-right:0.5px solid var(--bd);display:flex;flex-direction:column;overflow:hidden}
+#sidebar{width:240px;flex-shrink:0}
+.ph{padding:0 14px;height:40px;font-size:10px;font-weight:500;color:var(--tx3);text-transform:uppercase;letter-spacing:0.5px;flex-shrink:0;display:flex;align-items:center;gap:8px;border-bottom:0.5px solid var(--bd)}
+.ph .count{color:var(--tx2);font-weight:400;letter-spacing:0;text-transform:none;font-size:10px;font-family:monospace}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden}
+
+.filter-section-header{padding:10px 14px 6px;display:flex;align-items:center;gap:8px;background:var(--bg3)}
+.filter-section-title{font-size:10px;font-weight:600;color:var(--tx2);text-transform:uppercase;letter-spacing:0.6px}
+.filter-cb{display:flex;align-items:center;gap:8px;padding:7px 14px;cursor:pointer;font-size:12px;color:var(--tx2);transition:background 0.1s;user-select:none}
+.filter-cb:hover{background:var(--bg3);color:var(--tx1)}
+.filter-cb input[type="checkbox"]{margin:0;cursor:pointer;flex-shrink:0;width:13px;height:13px;accent-color:var(--c-str)}
+.filter-cb .cb-label{flex:1;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.filter-cb input:checked ~ .cb-label{font-weight:600;color:var(--c-str)}
+.filter-cb .ct{font-size:9px;font-family:monospace;color:var(--tx3);background:var(--bg3);padding:1px 5px;border-radius:8px;min-width:20px;text-align:center;flex-shrink:0}
+.filter-cb:hover .ct{background:var(--bg2)}
+.filter-cb input:checked ~ .ct{background:var(--c-bg);color:var(--c-str)}
+#clear-filters{margin:12px 14px;padding:6px 12px;font-size:10px;text-transform:uppercase;letter-spacing:0.3px;font-weight:500;background:var(--bg1);color:var(--r-tx);border:0.5px solid var(--r-fill);border-radius:5px;cursor:pointer;font-family:inherit;display:none}
+#clear-filters:hover{background:var(--r-fill);border-color:var(--r-str)}
+
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+
+#splash{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:24px}
+#splash img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px}
+
+#carousel-view{flex:1;display:none;flex-direction:column;overflow:hidden}
+#carousel-header{padding:0 20px;height:40px;display:flex;align-items:center;gap:12px;border-bottom:0.5px solid var(--bd);background:var(--bg2);flex-shrink:0}
+#back-btn{background:none;border:none;color:var(--tx3);font-size:10px;font-family:inherit;font-weight:500;text-transform:uppercase;letter-spacing:0.5px;cursor:pointer;padding:0;text-decoration:underline dotted;text-underline-offset:3px}
+#back-btn:hover{color:var(--c-str)}
+#result-count{font-size:10px;color:var(--tx2);font-family:monospace}
+
+#carousel{flex:1;display:flex;align-items:flex-start;overflow-x:auto;scroll-snap-type:x proximity;gap:16px;padding:20px;-webkit-overflow-scrolling:touch}
+.pcard{scroll-snap-align:start;flex:0 0 260px;background:var(--bg1);border:0.5px solid var(--bd);border-radius:8px;overflow:hidden;cursor:pointer;transition:border-color 0.15s,box-shadow 0.15s;display:flex;flex-direction:column}
+.pcard:hover{border-color:var(--c-str);box-shadow:0 0 0 1px var(--c-str)}
+.pcard-thumb{width:100%;aspect-ratio:16/9;object-fit:cover;background:var(--bg3);display:block}
+.pcard-body{padding:14px}
+.pcard-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+.card-tag{font-size:9px;font-weight:500;padding:2px 8px;border-radius:4px;letter-spacing:0.3px;text-transform:uppercase;background:var(--c-fill);color:var(--c-tx)}
+.pcard-title{font-size:15px;font-weight:600;color:var(--tx1);line-height:1.3;margin-bottom:6px}
+.pcard-excerpt{font-size:12px;color:var(--tx2);line-height:1.55;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+#empty{padding:48px 24px;text-align:center;color:var(--tx3);font-size:13px}
+
+#reader{display:none;position:fixed;inset:0;z-index:60;background:var(--bg1);flex-direction:column}
+#reader.open{display:flex}
+#reader-header{padding:0 20px;height:48px;display:flex;align-items:center;gap:12px;border-bottom:0.5px solid var(--bd);background:var(--bg2);flex-shrink:0}
+#reader-back{background:none;border:none;color:var(--tx3);font-size:10px;font-family:inherit;font-weight:500;text-transform:uppercase;letter-spacing:0.5px;cursor:pointer;padding:0;text-decoration:underline dotted;text-underline-offset:3px}
+#reader-back:hover{color:var(--c-str)}
+#reader-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.article{max-width:720px;margin:0 auto;padding:32px 28px 64px}
+.article .card-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.article-content h1{font-size:28px;font-weight:600;margin:18px 0 12px;letter-spacing:0.2px}
+.article-content h2{font-size:21px;font-weight:600;margin:22px 0 10px}
+.article-content h3{font-size:16px;font-weight:600;margin:16px 0 8px}
+.article-content p{margin:12px 0;line-height:1.7;color:var(--tx2)}
+.article-content ul,.article-content ol{margin:12px 0 12px 22px}
+.article-content li{margin:6px 0;line-height:1.65;color:var(--tx2)}
+.article-content code{background:var(--bg3);padding:2px 5px;border-radius:4px;font-family:'SF Mono',Menlo,monospace;font-size:90%}
+.article-content pre{background:var(--bg2);border:0.5px solid var(--bd);padding:14px;border-radius:8px;overflow-x:auto;margin:14px 0}
+.article-content pre code{background:none;padding:0}
+.article-content a{color:var(--c-str);text-decoration:underline;text-underline-offset:2px}
+.article-content blockquote{border-left:2px solid var(--bd);padding-left:14px;color:var(--tx3);margin:14px 0}
+.article-content img{max-width:100%;border-radius:8px;margin:14px 0;display:block}
+
+#scrim{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:40}
+
+@media(max-width:680px){
+  #topbar{gap:12px;padding:0 16px}
+  #filter-toggle{display:inline-block}
+  #scrim.open{display:block}
+  #sidebar{position:fixed;top:0;left:0;bottom:0;width:80%;max-width:300px;z-index:50;transform:translateX(-100%);transition:transform 0.22s ease;border-right:0.5px solid var(--bd);box-shadow:2px 0 12px rgba(0,0,0,0.18)}
+  #sidebar.open{transform:translateX(0)}
+  #sidebar .ph #close-drawer{margin-left:auto;background:none;border:none;color:var(--tx2);font-size:20px;line-height:1;cursor:pointer;padding:0 4px}
+  .pcard{flex:0 0 78%}
+  #splash h1{font-size:26px}
+  #splash{padding:28px}
+  .article{padding:24px 18px 56px}
+}
+@media(min-width:681px){
+  #close-drawer{display:none}
+}
+</style>
 </head>
 <body>
-  <img src="from-values-to-performance.png" alt="">
+<header id="topbar">
+  <div class="topbar-brand">
+    <div class="topbar-title">Blog</div>
+    <div class="topbar-tagline">qbalsoftware</div>
+  </div>
+  <div class="topbar-actions">
+    <button class="ph-link" id="filter-toggle">Filters</button>
+  </div>
+</header>
+
+<div id="shell">
+  <aside class="panel" id="sidebar">
+    <div class="ph"><span>Filter by Tag</span><button id="close-drawer" aria-label="Close">&times;</button></div>
+    <div class="scroll">
+      <div class="filter-section-header"><span class="filter-section-title">Tags</span></div>
+      <div id="tag-list"></div>
+      <button id="clear-filters">Clear filters</button>
+    </div>
+  </aside>
+
+  <main id="main">
+    <div id="splash">
+      <img src="cosmo-kramer.jpeg" alt="">
+    </div>
+    <div id="carousel-view">
+      <div id="carousel-header">
+        <button id="back-btn">&larr; Home</button>
+        <span id="result-count"></span>
+      </div>
+      <div id="carousel"></div>
+    </div>
+  </main>
+</div>
+
+<div id="reader">
+  <div id="reader-header"><button id="reader-back">&larr; Back to results</button></div>
+  <div id="reader-scroll"><div class="article" id="article"></div></div>
+</div>
+
+<div id="scrim"></div>
+
+<script>
+// ============================================================
+// POST INDEX - edit this to add/remove posts.
+//   file    : path to the markdown file (relative to repo root)
+//   tags    : facet tags
+//   title   : card title
+//   thumb   : thumbnail image URL (relative path or absolute)
+//   excerpt : short blurb shown on the card
+// ============================================================
+const POSTS = [
+  {
+    file: "posts/desert-roads.md",
+    tags: ["travel", "photography"],
+    title: "Desert Roads at Dawn",
+    thumb: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=600&q=70",
+    excerpt: "Chasing first light across empty highways, where the horizon dissolves into heat and silence."
+  },
+  {
+    file: "posts/forest-walk.md",
+    tags: ["nature", "photography"],
+    title: "A Walk Through the Pines",
+    thumb: "https://images.unsplash.com/photo-1448375240586-882707db888b?w=600&q=70",
+    excerpt: "Notes from a slow morning hike under old-growth canopy, and what the quiet teaches you."
+  },
+  {
+    file: "posts/city-lights.md",
+    tags: ["travel", "urban"],
+    title: "City Lights After Rain",
+    thumb: "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=600&q=70",
+    excerpt: "Neon reflections on wet pavement, and the particular magic of a city that never quite sleeps."
+  },
+  {
+    file: "posts/coffee-ritual.md",
+    tags: ["food", "writing"],
+    title: "The Morning Coffee Ritual",
+    thumb: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&q=70",
+    excerpt: "Why the first cup matters more than the rest, and the small ceremony that starts each day."
+  }
+];
+
+// Reference content shown when the markdown files are not yet in the repo.
+// After deploying, the SPA fetches the real files and ignores these.
+const FALLBACK = {
+  "posts/desert-roads.md": "# Desert Roads at Dawn\n\nThere is a particular hour before the sun crests the ridgeline when the desert holds its breath. The asphalt is cool, the air still, and the road runs straight to a vanishing point you will never reach.\n\n![Open desert highway](https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=900&q=70)\n\n## Why dawn\n\nLight at dawn is *directional* and forgiving. Shadows stretch long, color temperature is warm, and the world has not yet flattened under the midday glare.\n\n- Pack the night before\n- Leave in darkness\n- Arrive as the sky turns\n\n> The best photographs are made by being there, not by being clever.\n\nDrive slow. Stop often.",
+  "posts/forest-walk.md": "# A Walk Through the Pines\n\nThe trailhead is empty at this hour. Mist hangs between the trunks and the only sound is your own footfall on wet needles.\n\n![Pine forest in mist](https://images.unsplash.com/photo-1448375240586-882707db888b?w=900&q=70)\n\n## What the quiet teaches\n\nWalking slowly is a discipline. The forest rewards patience with detail you would otherwise stride past: a beetle, a fungus, the way water beads on a fern.\n\n1. Breathe\n2. Look down, then up\n3. Stop talking\n\nThe pines have been here longer than the trail. They will outlast it too.",
+  "posts/city-lights.md": "# City Lights After Rain\n\nRain changes a city. It turns every surface into a mirror and every streetlight into a smear of gold.\n\n![Rainy city street at night](https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=900&q=70)\n\n## The reflective hour\n\nShoot just after the rain stops, while the pavement is still wet but the sky is clearing. Reflections double your composition for free.\n\n`ISO 800 | f/2.8 | 1/60s` is a reasonable starting point.\n\n> A wet street is a second sky.",
+  "posts/coffee-ritual.md": "# The Morning Coffee Ritual\n\nThe first cup is not about caffeine. It is about the pause before the day begins.\n\n![Pour-over coffee](https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=900&q=70)\n\n## The small ceremony\n\nGrind. Heat. Pour in slow circles. Wait. The waiting is the point.\n\n- Weigh the beans\n- Time the bloom\n- Drink it before you check your phone\n\nEverything after is negotiable. This is not."
+};
+// ============================================================
+
+const splash = document.getElementById("splash");
+const carouselView = document.getElementById("carousel-view");
+const carousel = document.getElementById("carousel");
+const resultCount = document.getElementById("result-count");
+const tagList = document.getElementById("tag-list");
+const sidebar = document.getElementById("sidebar");
+const scrim = document.getElementById("scrim");
+const reader = document.getElementById("reader");
+const article = document.getElementById("article");
+
+const selected = new Set();
+const mdCache = {};
+
+function openDrawer(){ sidebar.classList.add("open"); scrim.classList.add("open"); }
+function closeDrawer(){ sidebar.classList.remove("open"); scrim.classList.remove("open"); }
+document.getElementById("filter-toggle").addEventListener("click", openDrawer);
+document.getElementById("close-drawer").addEventListener("click", closeDrawer);
+scrim.addEventListener("click", closeDrawer);
+
+// Build tag list with counts
+const tagCounts = {};
+POSTS.forEach(p => p.tags.forEach(t => { tagCounts[t] = (tagCounts[t] || 0) + 1; }));
+Object.keys(tagCounts).sort().forEach(tag => {
+  const label = document.createElement("label");
+  label.className = "filter-cb";
+  label.innerHTML = '<input type="checkbox" value="' + tag + '"><span class="cb-label">' + tag + '</span><span class="ct">' + tagCounts[tag] + '</span>';
+  label.querySelector("input").addEventListener("change", e => {
+    if (e.target.checked) selected.add(tag); else selected.delete(tag);
+    render();
+  });
+  tagList.appendChild(label);
+});
+
+const clearBtn = document.getElementById("clear-filters");
+clearBtn.addEventListener("click", () => {
+  selected.clear();
+  tagList.querySelectorAll("input").forEach(i => i.checked = false);
+  render();
+});
+
+document.getElementById("back-btn").addEventListener("click", () => {
+  selected.clear();
+  tagList.querySelectorAll("input").forEach(i => i.checked = false);
+  render();
+});
+
+function openReader(){ reader.classList.add("open"); document.getElementById("reader-scroll").scrollTop = 0; }
+function closeReader(){ reader.classList.remove("open"); }
+document.getElementById("reader-back").addEventListener("click", closeReader);
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") { if (reader.classList.contains("open")) closeReader(); else closeDrawer(); }
+});
+
+async function fetchMarkdown(post) {
+  if (mdCache[post.file]) return mdCache[post.file];
+  try {
+    const res = await fetch(post.file);
+    if (!res.ok) throw new Error(res.status);
+    const text = await res.text();
+    mdCache[post.file] = text;
+    return text;
+  } catch (err) {
+    // File not in repo yet -> use embedded reference content.
+    return FALLBACK[post.file] || ("# " + post.title + "\n\nFailed to load `" + post.file + "`.");
+  }
+}
+
+async function openPost(post) {
+  const tagsHtml = post.tags.map(t => '<span class="card-tag">' + t + '</span>').join("");
+  const md = await fetchMarkdown(post);
+  article.innerHTML = '<div class="card-tags">' + tagsHtml + '</div><div class="article-content">' + marked.parse(md) + '</div>';
+  openReader();
+}
+
+function render() {
+  clearBtn.style.display = selected.size > 0 ? "block" : "none";
+  closeReader();
+
+  if (selected.size === 0) {
+    splash.style.display = "flex";
+    carouselView.style.display = "none";
+    return;
+  }
+  splash.style.display = "none";
+  carouselView.style.display = "flex";
+  closeDrawer();
+
+  // OR matching
+  const matches = POSTS.filter(p => p.tags.some(t => selected.has(t)));
+  resultCount.textContent = matches.length + (matches.length === 1 ? " post" : " posts");
+
+  carousel.innerHTML = "";
+  if (matches.length === 0) {
+    carousel.innerHTML = '<div id="empty">No posts match the selected tags.</div>';
+    return;
+  }
+
+  matches.forEach(post => {
+    const card = document.createElement("div");
+    card.className = "pcard";
+    const tagsHtml = post.tags.map(t => '<span class="card-tag">' + t + '</span>').join("");
+    const thumb = post.thumb ? '<img class="pcard-thumb" src="' + post.thumb + '" alt="" loading="lazy">' : '';
+    card.innerHTML = thumb +
+      '<div class="pcard-body">' +
+      '<div class="pcard-tags">' + tagsHtml + '</div>' +
+      '<div class="pcard-title">' + post.title + '</div>' +
+      '<div class="pcard-excerpt">' + post.excerpt + '</div>' +
+      '</div>';
+    card.addEventListener("click", () => openPost(post));
+    carousel.appendChild(card);
+  });
+}
+
+render();
+</script>
 </body>
 </html>
-
-

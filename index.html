@@ -22,25 +22,21 @@
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg1);color:var(--tx1);height:100vh;overflow:hidden;font-size:13px;display:flex;flex-direction:column}
 
 #topbar{flex-shrink:0;display:flex;align-items:center;gap:24px;padding:0 20px;height:56px;border-bottom:0.5px solid var(--bd);background:var(--bg2)}
-.topbar-brand{display:flex;flex-direction:column;gap:2px;min-width:0}
-.topbar-title{font-size:15px;font-weight:600;color:var(--tx1);letter-spacing:0.2px;line-height:1.2;white-space:nowrap}
-.topbar-tagline{font-size:10px;color:var(--tx3);font-family:'SF Mono',Menlo,monospace;letter-spacing:0.3px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.topbar-actions{margin-left:auto;display:flex;align-items:center;gap:18px;flex-shrink:0}
 .ph-link{background:none;border:none;color:var(--tx3);font-size:10px;font-family:inherit;font-weight:500;text-transform:uppercase;letter-spacing:0.5px;cursor:pointer;padding:0;text-decoration:underline dotted;text-underline-offset:3px}
 .ph-link:hover{color:var(--c-str)}
 
 #shell{display:flex;flex:1;min-height:0}
 
 .panel{background:var(--bg2);border-right:0.5px solid var(--bd);display:flex;flex-direction:column;overflow:hidden}
-#sidebar{position:fixed;top:0;left:0;bottom:0;width:300px;max-width:80%;z-index:50;transform:translateX(-100%);transition:transform 0.22s ease;border-right:0.5px solid var(--bd);box-shadow:2px 0 12px rgba(0,0,0,0.18)}
+#sidebar{position:fixed;top:0;left:0;bottom:0;width:320px;max-width:85%;z-index:50;transform:translateX(-100%);transition:transform 0.22s ease;border-right:0.5px solid var(--bd);box-shadow:2px 0 12px rgba(0,0,0,0.18)}
 #sidebar.open{transform:translateX(0)}
-#sidebar .ph #close-drawer{margin-left:auto;background:none;border:none;color:var(--tx2);font-size:20px;line-height:1;cursor:pointer;padding:0 4px}
 .ph{padding:0 14px;height:40px;font-size:10px;font-weight:500;color:var(--tx3);text-transform:uppercase;letter-spacing:0.5px;flex-shrink:0;display:flex;align-items:center;gap:8px;border-bottom:0.5px solid var(--bd)}
-.ph .count{color:var(--tx2);font-weight:400;letter-spacing:0;text-transform:none;font-size:10px;font-family:monospace}
+#sidebar .ph #close-drawer{margin-left:auto;background:none;border:none;color:var(--tx2);font-size:20px;line-height:1;cursor:pointer;padding:0 4px}
 .scroll{flex:1;overflow-y:auto;overflow-x:hidden}
 
 .filter-section-header{padding:10px 14px 6px;display:flex;align-items:center;gap:8px;background:var(--bg3)}
 .filter-section-title{font-size:10px;font-weight:600;color:var(--tx2);text-transform:uppercase;letter-spacing:0.6px}
+.filter-section-header .ph-link{margin-left:auto}
 .filter-cb{display:flex;align-items:center;gap:8px;padding:7px 14px;cursor:pointer;font-size:12px;color:var(--tx2);transition:background 0.1s;user-select:none}
 .filter-cb:hover{background:var(--bg3);color:var(--tx1)}
 .filter-cb input[type="checkbox"]{margin:0;cursor:pointer;flex-shrink:0;width:13px;height:13px;accent-color:var(--c-str)}
@@ -49,39 +45,29 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 .filter-cb .ct{font-size:9px;font-family:monospace;color:var(--tx3);background:var(--bg3);padding:1px 5px;border-radius:8px;min-width:20px;text-align:center;flex-shrink:0}
 .filter-cb:hover .ct{background:var(--bg2)}
 .filter-cb input:checked ~ .ct{background:var(--c-bg);color:var(--c-str)}
-#clear-filters{margin:12px 14px;padding:6px 12px;font-size:10px;text-transform:uppercase;letter-spacing:0.3px;font-weight:500;background:var(--bg1);color:var(--r-tx);border:0.5px solid var(--r-fill);border-radius:5px;cursor:pointer;font-family:inherit;display:none}
-#clear-filters:hover{background:var(--r-fill);border-color:var(--r-str)}
+
+.entry{display:flex;gap:10px;padding:10px 14px;cursor:pointer;border-bottom:0.5px solid var(--bd);transition:background 0.1s}
+.entry:hover{background:var(--bg3)}
+.entry.active{background:var(--c-bg)}
+.entry.active .entry-title{color:var(--c-str)}
+.entry-thumb{width:52px;height:52px;flex-shrink:0;object-fit:cover;border-radius:6px;background:var(--bg3)}
+.entry-body{min-width:0;display:flex;flex-direction:column;gap:3px}
+.entry-title{font-size:13px;font-weight:600;color:var(--tx1);line-height:1.3}
+.entry-tags{display:flex;flex-wrap:wrap;gap:4px}
+.entry-tag{font-size:8px;font-weight:500;padding:1px 6px;border-radius:3px;letter-spacing:0.3px;text-transform:uppercase;background:var(--c-fill);color:var(--c-tx)}
+.entry-empty{padding:24px 14px;color:var(--tx3);font-size:12px;line-height:1.6}
 
 #main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
 
 #splash{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:24px}
 #splash img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px}
 
-#carousel-view{flex:1;display:none;flex-direction:column;overflow:hidden}
-#carousel-header{padding:0 20px;height:40px;display:flex;align-items:center;gap:12px;border-bottom:0.5px solid var(--bd);background:var(--bg2);flex-shrink:0}
-#back-btn{background:none;border:none;color:var(--tx3);font-size:10px;font-family:inherit;font-weight:500;text-transform:uppercase;letter-spacing:0.5px;cursor:pointer;padding:0;text-decoration:underline dotted;text-underline-offset:3px}
-#back-btn:hover{color:var(--c-str)}
-#result-count{font-size:10px;color:var(--tx2);font-family:monospace}
-
-#carousel{flex:1;display:flex;align-items:flex-start;overflow-x:auto;scroll-snap-type:x proximity;gap:16px;padding:20px;-webkit-overflow-scrolling:touch}
-.pcard{scroll-snap-align:start;flex:0 0 260px;background:var(--bg1);border:0.5px solid var(--bd);border-radius:8px;overflow:hidden;cursor:pointer;transition:border-color 0.15s,box-shadow 0.15s;display:flex;flex-direction:column}
-.pcard:hover{border-color:var(--c-str);box-shadow:0 0 0 1px var(--c-str)}
-.pcard-thumb{width:100%;aspect-ratio:16/9;object-fit:cover;background:var(--bg3);display:block}
-.pcard-body{padding:14px}
-.pcard-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
-.card-tag{font-size:9px;font-weight:500;padding:2px 8px;border-radius:4px;letter-spacing:0.3px;text-transform:uppercase;background:var(--c-fill);color:var(--c-tx)}
-.pcard-title{font-size:15px;font-weight:600;color:var(--tx1);line-height:1.3;margin-bottom:6px}
-.pcard-excerpt{font-size:12px;color:var(--tx2);line-height:1.55;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-#empty{padding:48px 24px;text-align:center;color:var(--tx3);font-size:13px}
-
-#reader{display:none;position:fixed;inset:0;z-index:60;background:var(--bg1);flex-direction:column}
-#reader.open{display:flex}
-#reader-header{padding:0 20px;height:48px;display:flex;align-items:center;gap:12px;border-bottom:0.5px solid var(--bd);background:var(--bg2);flex-shrink:0}
-#reader-back{background:none;border:none;color:var(--tx3);font-size:10px;font-family:inherit;font-weight:500;text-transform:uppercase;letter-spacing:0.5px;cursor:pointer;padding:0;text-decoration:underline dotted;text-underline-offset:3px}
-#reader-back:hover{color:var(--c-str)}
+#reader-view{flex:1;display:none;flex-direction:column;overflow:hidden}
+#reader-view.open{display:flex}
 #reader-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .article{max-width:720px;margin:0 auto;padding:32px 28px 64px}
 .article .card-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.card-tag{font-size:9px;font-weight:500;padding:2px 8px;border-radius:4px;letter-spacing:0.3px;text-transform:uppercase;background:var(--c-fill);color:var(--c-tx)}
 .article-content h1{font-size:28px;font-weight:600;margin:18px 0 12px;letter-spacing:0.2px}
 .article-content h2{font-size:21px;font-weight:600;margin:22px 0 10px}
 .article-content h3{font-size:16px;font-weight:600;margin:16px 0 8px}
@@ -100,7 +86,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 
 @media(max-width:680px){
   #topbar{gap:12px;padding:0 16px}
-  .pcard{flex:0 0 78%}
   #splash{padding:16px}
   .article{padding:24px 18px 56px}
 }
@@ -115,9 +100,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
   <aside class="panel" id="sidebar">
     <div class="ph"><span>Topics</span><button id="close-drawer" aria-label="Close">&times;</button></div>
     <div class="scroll">
-      <div class="filter-section-header"><span class="filter-section-title">Tags</span></div>
+      <div class="filter-section-header">
+        <span class="filter-section-title">Filter by tag</span>
+        <button class="ph-link" id="clear-filters" style="display:none">Clear</button>
+      </div>
       <div id="tag-list"></div>
-      <button id="clear-filters">Clear filters</button>
+      <div class="filter-section-header"><span class="filter-section-title">Posts</span></div>
+      <div id="entry-list"></div>
     </div>
   </aside>
 
@@ -125,19 +114,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
     <div id="splash">
       <img src="cosmo-kramer-splash.jpg" alt="">
     </div>
-    <div id="carousel-view">
-      <div id="carousel-header">
-        <button id="back-btn">&larr; Home</button>
-        <span id="result-count"></span>
-      </div>
-      <div id="carousel"></div>
+    <div id="reader-view">
+      <div id="reader-scroll"><div class="article" id="article"></div></div>
     </div>
   </main>
-</div>
-
-<div id="reader">
-  <div id="reader-header"><button id="reader-back">&larr; Back to results</button></div>
-  <div id="reader-scroll"><div class="article" id="article"></div></div>
 </div>
 
 <div id="scrim"></div>
@@ -145,40 +125,35 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 <script>
 // ============================================================
 // POST INDEX - edit this to add/remove posts.
-//   file    : path to the markdown file (relative to repo root)
-//   tags    : facet tags
-//   title   : card title
-//   thumb   : thumbnail image URL (relative path or absolute)
-//   excerpt : short blurb shown on the card
+//   file  : path to the markdown file (relative to repo root)
+//   tags  : facet tags
+//   title : entry title
+//   thumb : thumbnail image URL (relative path or absolute)
 // ============================================================
 const POSTS = [
   {
     file: "posts/desert-roads.md",
     tags: ["travel", "photography"],
     title: "Desert Roads at Dawn",
-    thumb: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=600&q=70",
-    excerpt: "Chasing first light across empty highways, where the horizon dissolves into heat and silence."
+    thumb: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=200&q=70"
   },
   {
     file: "posts/forest-walk.md",
     tags: ["nature", "photography"],
     title: "A Walk Through the Pines",
-    thumb: "https://images.unsplash.com/photo-1448375240586-882707db888b?w=600&q=70",
-    excerpt: "Notes from a slow morning hike under old-growth canopy, and what the quiet teaches you."
+    thumb: "https://images.unsplash.com/photo-1448375240586-882707db888b?w=200&q=70"
   },
   {
     file: "posts/city-lights.md",
     tags: ["travel", "urban"],
     title: "City Lights After Rain",
-    thumb: "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=600&q=70",
-    excerpt: "Neon reflections on wet pavement, and the particular magic of a city that never quite sleeps."
+    thumb: "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=200&q=70"
   },
   {
     file: "posts/coffee-ritual.md",
     tags: ["food", "writing"],
     title: "The Morning Coffee Ritual",
-    thumb: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&q=70",
-    excerpt: "Why the first cup matters more than the rest, and the small ceremony that starts each day."
+    thumb: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=200&q=70"
   }
 ];
 
@@ -193,59 +168,76 @@ const FALLBACK = {
 // ============================================================
 
 const splash = document.getElementById("splash");
-const carouselView = document.getElementById("carousel-view");
-const carousel = document.getElementById("carousel");
-const resultCount = document.getElementById("result-count");
+const readerView = document.getElementById("reader-view");
+const article = document.getElementById("article");
 const tagList = document.getElementById("tag-list");
+const entryList = document.getElementById("entry-list");
 const sidebar = document.getElementById("sidebar");
 const scrim = document.getElementById("scrim");
-const reader = document.getElementById("reader");
-const article = document.getElementById("article");
 
 const selected = new Set();
 const mdCache = {};
+let activeFile = null;
 
 function openDrawer(){ sidebar.classList.add("open"); scrim.classList.add("open"); }
 function closeDrawer(){ sidebar.classList.remove("open"); scrim.classList.remove("open"); }
 document.getElementById("filter-toggle").addEventListener("click", openDrawer);
 document.getElementById("close-drawer").addEventListener("click", closeDrawer);
 scrim.addEventListener("click", closeDrawer);
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeDrawer(); });
 
-// Build tag list with counts
+// Build tag filter list with counts
 const tagCounts = {};
 POSTS.forEach(p => p.tags.forEach(t => { tagCounts[t] = (tagCounts[t] || 0) + 1; }));
+const clearBtn = document.getElementById("clear-filters");
 Object.keys(tagCounts).sort().forEach(tag => {
   const label = document.createElement("label");
   label.className = "filter-cb";
   label.innerHTML = '<input type="checkbox" value="' + tag + '"><span class="cb-label">' + tag + '</span><span class="ct">' + tagCounts[tag] + '</span>';
   label.querySelector("input").addEventListener("change", e => {
     if (e.target.checked) selected.add(tag); else selected.delete(tag);
-    render();
+    renderEntries();
   });
   tagList.appendChild(label);
 });
-
-const clearBtn = document.getElementById("clear-filters");
 clearBtn.addEventListener("click", () => {
   selected.clear();
   tagList.querySelectorAll("input").forEach(i => i.checked = false);
-  render();
+  renderEntries();
 });
 
-document.getElementById("back-btn").addEventListener("click", () => {
-  selected.clear();
-  tagList.querySelectorAll("input").forEach(i => i.checked = false);
-  render();
-});
+function visiblePosts(){
+  if (selected.size === 0) return POSTS;
+  return POSTS.filter(p => p.tags.some(t => selected.has(t)));
+}
 
-function openReader(){ reader.classList.add("open"); document.getElementById("reader-scroll").scrollTop = 0; }
-function closeReader(){ reader.classList.remove("open"); }
-document.getElementById("reader-back").addEventListener("click", closeReader);
-document.addEventListener("keydown", e => {
-  if (e.key === "Escape") { if (reader.classList.contains("open")) closeReader(); else closeDrawer(); }
-});
+function renderEntries(){
+  clearBtn.style.display = selected.size > 0 ? "inline-block" : "none";
+  const posts = visiblePosts();
+  entryList.innerHTML = "";
+  if (posts.length === 0){
+    const e = document.createElement("div");
+    e.className = "entry-empty";
+    e.textContent = "No posts match the selected tags.";
+    entryList.appendChild(e);
+    return;
+  }
+  posts.forEach(post => {
+    const row = document.createElement("div");
+    row.className = "entry" + (post.file === activeFile ? " active" : "");
+    const thumb = post.thumb ? '<img class="entry-thumb" src="' + post.thumb + '" alt="" loading="lazy">' : '';
+    const tagsHtml = post.tags.map(t => '<span class="entry-tag">' + t + '</span>').join("");
+    row.innerHTML = thumb +
+      '<div class="entry-body">' +
+      '<div class="entry-title">' + post.title + '</div>' +
+      '<div class="entry-tags">' + tagsHtml + '</div>' +
+      '</div>';
+    row.addEventListener("click", () => openPost(post));
+    entryList.appendChild(row);
+  });
+}
 
-async function fetchMarkdown(post) {
+async function fetchMarkdown(post){
   if (mdCache[post.file]) return mdCache[post.file];
   try {
     const res = await fetch(post.file);
@@ -254,58 +246,23 @@ async function fetchMarkdown(post) {
     mdCache[post.file] = text;
     return text;
   } catch (err) {
-    // File not in repo yet -> use embedded reference content.
     return FALLBACK[post.file] || ("# " + post.title + "\n\nFailed to load `" + post.file + "`.");
   }
 }
 
-async function openPost(post) {
+async function openPost(post){
+  activeFile = post.file;
+  renderEntries();
+  closeDrawer();
+  splash.style.display = "none";
+  readerView.classList.add("open");
+  document.getElementById("reader-scroll").scrollTop = 0;
   const tagsHtml = post.tags.map(t => '<span class="card-tag">' + t + '</span>').join("");
   const md = await fetchMarkdown(post);
   article.innerHTML = '<div class="card-tags">' + tagsHtml + '</div><div class="article-content">' + marked.parse(md) + '</div>';
-  openReader();
 }
 
-function render() {
-  clearBtn.style.display = selected.size > 0 ? "block" : "none";
-  closeReader();
-
-  if (selected.size === 0) {
-    splash.style.display = "flex";
-    carouselView.style.display = "none";
-    return;
-  }
-  splash.style.display = "none";
-  carouselView.style.display = "flex";
-  closeDrawer();
-
-  // OR matching
-  const matches = POSTS.filter(p => p.tags.some(t => selected.has(t)));
-  resultCount.textContent = matches.length + (matches.length === 1 ? " post" : " posts");
-
-  carousel.innerHTML = "";
-  if (matches.length === 0) {
-    carousel.innerHTML = '<div id="empty">No posts match the selected tags.</div>';
-    return;
-  }
-
-  matches.forEach(post => {
-    const card = document.createElement("div");
-    card.className = "pcard";
-    const tagsHtml = post.tags.map(t => '<span class="card-tag">' + t + '</span>').join("");
-    const thumb = post.thumb ? '<img class="pcard-thumb" src="' + post.thumb + '" alt="" loading="lazy">' : '';
-    card.innerHTML = thumb +
-      '<div class="pcard-body">' +
-      '<div class="pcard-tags">' + tagsHtml + '</div>' +
-      '<div class="pcard-title">' + post.title + '</div>' +
-      '<div class="pcard-excerpt">' + post.excerpt + '</div>' +
-      '</div>';
-    card.addEventListener("click", () => openPost(post));
-    carousel.appendChild(card);
-  });
-}
-
-render();
+renderEntries();
 </script>
 </body>
 </html>

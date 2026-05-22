@@ -28,12 +28,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 .topbar-actions{margin-left:auto;display:flex;align-items:center;gap:18px;flex-shrink:0}
 .ph-link{background:none;border:none;color:var(--tx3);font-size:10px;font-family:inherit;font-weight:500;text-transform:uppercase;letter-spacing:0.5px;cursor:pointer;padding:0;text-decoration:underline dotted;text-underline-offset:3px}
 .ph-link:hover{color:var(--c-str)}
-#filter-toggle{display:none}
 
 #shell{display:flex;flex:1;min-height:0}
 
 .panel{background:var(--bg2);border-right:0.5px solid var(--bd);display:flex;flex-direction:column;overflow:hidden}
-#sidebar{width:240px;flex-shrink:0}
+#sidebar{position:fixed;top:0;left:0;bottom:0;width:300px;max-width:80%;z-index:50;transform:translateX(-100%);transition:transform 0.22s ease;border-right:0.5px solid var(--bd);box-shadow:2px 0 12px rgba(0,0,0,0.18)}
+#sidebar.open{transform:translateX(0)}
+#sidebar .ph #close-drawer{margin-left:auto;background:none;border:none;color:var(--tx2);font-size:20px;line-height:1;cursor:pointer;padding:0 4px}
 .ph{padding:0 14px;height:40px;font-size:10px;font-weight:500;color:var(--tx3);text-transform:uppercase;letter-spacing:0.5px;flex-shrink:0;display:flex;align-items:center;gap:8px;border-bottom:0.5px solid var(--bd)}
 .ph .count{color:var(--tx2);font-weight:400;letter-spacing:0;text-transform:none;font-size:10px;font-family:monospace}
 .scroll{flex:1;overflow-y:auto;overflow-x:hidden}
@@ -53,8 +54,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 
 #main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
 
-#splash{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:24px}
-#splash img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px}
+#splash{flex:1;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:24px}
+#splash::before{content:"";position:absolute;inset:0;background-image:url("cosmo-kramer.jpeg");background-size:cover;background-position:center;filter:blur(28px) brightness(0.55);transform:scale(1.15)}
+#splash img{position:relative;max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;box-shadow:0 8px 40px rgba(0,0,0,0.4)}
 
 #carousel-view{flex:1;display:none;flex-direction:column;overflow:hidden}
 #carousel-header{padding:0 20px;height:40px;display:flex;align-items:center;gap:12px;border-bottom:0.5px solid var(--bd);background:var(--bg2);flex-shrink:0}
@@ -95,38 +97,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 .article-content img{max-width:100%;border-radius:8px;margin:14px 0;display:block}
 
 #scrim{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:40}
+#scrim.open{display:block}
 
 @media(max-width:680px){
   #topbar{gap:12px;padding:0 16px}
-  #filter-toggle{display:inline-block}
-  #scrim.open{display:block}
-  #sidebar{position:fixed;top:0;left:0;bottom:0;width:80%;max-width:300px;z-index:50;transform:translateX(-100%);transition:transform 0.22s ease;border-right:0.5px solid var(--bd);box-shadow:2px 0 12px rgba(0,0,0,0.18)}
-  #sidebar.open{transform:translateX(0)}
-  #sidebar .ph #close-drawer{margin-left:auto;background:none;border:none;color:var(--tx2);font-size:20px;line-height:1;cursor:pointer;padding:0 4px}
   .pcard{flex:0 0 78%}
-  #splash h1{font-size:26px}
-  #splash{padding:28px}
+  #splash{padding:16px}
   .article{padding:24px 18px 56px}
-}
-@media(min-width:681px){
-  #close-drawer{display:none}
 }
 </style>
 </head>
 <body>
 <header id="topbar">
-  <div class="topbar-brand">
-    <div class="topbar-title">Blog</div>
-    <div class="topbar-tagline">qbalsoftware</div>
-  </div>
-  <div class="topbar-actions">
-    <button class="ph-link" id="filter-toggle">Filters</button>
-  </div>
+  <button class="ph-link" id="filter-toggle">Topics</button>
 </header>
 
 <div id="shell">
   <aside class="panel" id="sidebar">
-    <div class="ph"><span>Filter by Tag</span><button id="close-drawer" aria-label="Close">&times;</button></div>
+    <div class="ph"><span>Topics</span><button id="close-drawer" aria-label="Close">&times;</button></div>
     <div class="scroll">
       <div class="filter-section-header"><span class="filter-section-title">Tags</span></div>
       <div id="tag-list"></div>
